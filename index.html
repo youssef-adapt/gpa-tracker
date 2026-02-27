@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 Semester GPA Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+        }
+        body {
+            background: #eef2f6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+        }
+        .gpa-card {
+            background: white;
+            max-width: 850px;
+            width: 100%;
+            border-radius: 40px;
+            box-shadow: 0 30px 60px -20px #1e293b60;
+            padding: 40px 35px;
+        }
+        h1 {
+            font-size: 2.3rem;
+            font-weight: 600;
+            color: #0b1e33;
+            letter-spacing: -0.02em;
+            margin-bottom: 6px;
+        }
+        .sub {
+            color: #475569;
+            margin-bottom: 30px;
+            font-size: 1rem;
+            border-left: 4px solid #2563eb;
+            padding-left: 16px;
+            background: #f9fafc;
+            border-radius: 0 14px 14px 0;
+        }
+        .summary {
+            background: #f1f4f9;
+            border-radius: 28px;
+            padding: 24px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-bottom: 32px;
+        }
+        .gpa-box {
+            background: white;
+            padding: 12px 32px;
+            border-radius: 50px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.02);
+            text-align: center;
+        }
+        .gpa-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #4b5563;
+            letter-spacing: 1px;
+        }
+        .gpa-number {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.2;
+        }
+        .credits-box {
+            background: white;
+            padding: 12px 32px;
+            border-radius: 50px;
+            text-align: center;
+        }
+        .credits-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e3a8a;
+        }
+        .course-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1.5fr 0.5fr;
+            gap: 12px;
+            padding: 0 8px;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.9rem;
+        }
+        .course-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1.5fr 0.5fr;
+            gap: 12px;
+            margin-bottom: 14px;
+            align-items: center;
+        }
+        .course-row input, .course-row select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 24px;
+            font-size: 0.95rem;
+            background: white;
+            transition: 0.15s;
+        }
+        .course-row input:focus, .course-row select:focus {
+            border-color: #2563eb;
+            outline: none;
+            box-shadow: 0 0 0 3px #2563eb20;
+        }
+        .remove-btn {
+            background: #fee2e2;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #991b1b;
+            cursor: pointer;
+            transition: 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .remove-btn:hover {
+            background: #fecaca;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 14px 30px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            background: white;
+            border: 1px solid #cbd5e1;
+            transition: 0.1s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-primary {
+            background: #0f172a;
+            color: white;
+            border: none;
+            box-shadow: 0 8px 18px -6px #0f172a90;
+        }
+        .btn-primary:hover {
+            background: #1e293b;
+        }
+        .btn-secondary:hover {
+            background: #f1f5f9;
+        }
+        .footer-note {
+            margin-top: 35px;
+            font-size: 0.8rem;
+            color: #62748c;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="gpa-card">
+    <h1>🎓 Semester GPA</h1>
+    <div class="sub">Add your courses — GPA updates automatically (4.0 scale)</div>
+
+    <!-- Summary numbers -->
+    <div class="summary">
+        <div class="gpa-box">
+            <div class="gpa-label">Cumulative GPA</div>
+            <div class="gpa-number" id="gpaDisplay">0.00</div>
+        </div>
+        <div class="credits-box">
+            <div class="gpa-label">Total Credits</div>
+            <div class="credits-number" id="creditsDisplay">0</div>
+        </div>
+    </div>
+
+    <!-- Column headers -->
+    <div class="course-header">
+        <span>Course (optional)</span>
+        <span>Credits</span>
+        <span>Grade</span>
+        <span></span>
+    </div>
+
+    <!-- Container for dynamic rows -->
+    <div id="coursesContainer"></div>
+
+    <!-- Buttons -->
+    <div class="action-buttons">
+        <button class="btn btn-primary" id="addCourseBtn">➕ Add course</button>
+        <button class="btn btn-secondary" id="resetBtn">⟲ Reset all</button>
+    </div>
+
+    <div class="footer-note">⭐ Grade scale: A=4.0, A-=3.7, B+=3.3, B=3.0, B-=2.7, C+=2.3, C=2.0, D=1.0, F=0.0</div>
+</div>
+
+<script>
+    (function() {
+        // ----- Grade point mapping -----
+        const gradePoints = {
+            'A': 4.0, 'A-': 3.7,
+            'B+': 3.3, 'B': 3.0, 'B-': 2.7,
+            'C+': 2.3, 'C': 2.0,
+            'D': 1.0,
+            'F': 0.0
+        };
+
+        // ----- DOM elements -----
+        const container = document.getElementById('coursesContainer');
+        const gpaSpan = document.getElementById('gpaDisplay');
+        const creditsSpan = document.getElementById('creditsDisplay');
+        const addBtn = document.getElementById('addCourseBtn');
+        const resetBtn = document.getElementById('resetBtn');
+
+        // ----- Helper to recalc GPA from all rows -----
+        function recalculate() {
+            const rows = document.querySelectorAll('.course-row');
+            let totalPoints = 0;
+            let totalCredits = 0;
+
+            rows.forEach(row => {
+                const creditsInput = row.querySelector('.credits-input');
+                const gradeSelect = row.querySelector('.grade-select');
+                const credits = parseFloat(creditsInput.value);
+                const grade = gradeSelect.value;
+
+                if (!isNaN(credits) && credits > 0 && gradePoints.hasOwnProperty(grade)) {
+                    totalPoints += credits * gradePoints[grade];
+                    totalCredits += credits;
+                }
+            });
+
+            if (totalCredits > 0) {
+                const gpa = totalPoints / totalCredits;
+                gpaSpan.textContent = gpa.toFixed(2);
+            } else {
+                gpaSpan.textContent = '0.00';
+            }
+            creditsSpan.textContent = totalCredits.toFixed(1); // show one decimal if half credits
+        }
+
+        // ----- Create a new course row (optionally with placeholder values) -----
+        function createRow(courseName = '', credits = '', grade = 'A') {
+            const row = document.createElement('div');
+            row.className = 'course-row';
+
+            // Course name input
+            const nameInput = document.createElement('input');
+            nameInput.type = 'text';
+            nameInput.placeholder = 'e.g. Math 101';
+            nameInput.value = courseName;
+            nameInput.classList.add('course-name');
+
+            // Credits input (number)
+            const creditsInput = document.createElement('input');
+            creditsInput.type = 'number';
+            creditsInput.placeholder = 'Credits';
+            creditsInput.step = '0.5';
+            creditsInput.min = '0';
+            creditsInput.value = credits;
+            creditsInput.classList.add('credits-input');
+
+            // Grade dropdown
+            const gradeSelect = document.createElement('select');
+            gradeSelect.classList.add('grade-select');
+            const grades = ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'D', 'F'];
+            grades.forEach(g => {
+                const option = document.createElement('option');
+                option.value = g;
+                option.textContent = g;
+                if (g === grade) option.selected = true;
+                gradeSelect.appendChild(option);
+            });
+
+            // Remove button
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'remove-btn';
+            removeBtn.innerHTML = '✕';
+            removeBtn.setAttribute('aria-label', 'remove course');
+
+            // Assemble row
+            row.appendChild(nameInput);
+            row.appendChild(creditsInput);
+            row.appendChild(gradeSelect);
+            row.appendChild(removeBtn);
+
+            // Attach events
+            creditsInput.addEventListener('input', recalculate);
+            gradeSelect.addEventListener('change', recalculate);
+            removeBtn.addEventListener('click', () => {
+                row.remove();
+                recalculate();
+            });
+
+            return row;
+        }
+
+        // ----- Add a new empty row -----
+        function addEmptyRow() {
+            const newRow = createRow('', '', 'A'); // default grade A
+            container.appendChild(newRow);
+            recalculate();
+        }
+
+        // ----- Reset to exactly one empty row (or default demo rows?) For simplicity, 2 demo rows. -----
+        function resetToDefault() {
+            container.innerHTML = ''; // clear
+
+            // Add a couple of example rows
+            const row1 = createRow('Biology', '3', 'B+');
+            const row2 = createRow('History', '4', 'A-');
+            const row3 = createRow('Calculus', '4', 'B');
+            container.appendChild(row1);
+            container.appendChild(row2);
+            container.appendChild(row3);
+            recalculate();
+        }
+
+        // ----- Event listeners -----
+        addBtn.addEventListener('click', addEmptyRow);
+        resetBtn.addEventListener('click', resetToDefault);
+
+        // ----- Initialize with some default rows (so page isn't empty) -----
+        resetToDefault();
+    })();
+</script>
+</body>
+</html>
