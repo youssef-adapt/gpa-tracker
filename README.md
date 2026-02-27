@@ -5,4 +5,6 @@ changed background color of total credits
 
 changed text color of button
 
-added feature to have 0 gpa
+added new default subject
+
+const row4 = createRow('Math 101', '6', 'C-');
