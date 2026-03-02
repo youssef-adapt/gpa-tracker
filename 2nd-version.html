@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 Semester GPA Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+        }
+        body {
+            background: #eef2f6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+        }
+        .gpa-card {
+            background: white;
+            max-width: 850px;
+            width: 100%;
+            border-radius: 40px;
+            box-shadow: 0 30px 60px -20px #1e293b60;
+            padding: 40px 35px;
+        }
+        h1 {
+            font-size: 2.3rem;
+            font-weight: 600;
+            color: #0b1e33;
+            letter-spacing: -0.02em;
+            margin-bottom: 6px;
+        }
+        .sub {
+            color: #475569;
+            margin-bottom: 30px;
+            font-size: 1rem;
+            border-left: 4px solid #2563eb;
+            padding-left: 16px;
+            background: #f9fafc;
+            border-radius: 0 14px 14px 0;
+        }
+        .summary {
+            background: #f1f4f9;
+            border-radius: 28px;
+            padding: 24px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-bottom: 32px;
+        }
+        .gpa-box {
+            background: white;
+            padding: 12px 32px;
+            border-radius: 50px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.02);
+            text-align: center;
+        }
+        .gpa-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #4b5563;
+            letter-spacing: 1px;
+        }
+        .gpa-number {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.2;
+        }
+        .credits-box {
+            background: white;
+            padding: 12px 32px;
+            border-radius: 50px;
+            text-align: center;
+        }
+        .credits-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e3a8a;
+        }
+        .course-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1.5fr 0.5fr;
+            gap: 12px;
+            padding: 0 8px;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.9rem;
+        }
+        .course-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1.5fr 0.5fr;
+            gap: 12px;
+            margin-bottom: 14px;
+            align-items: center;
+        }
+        .course-row input, .course-row select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 24px;
+            font-size: 0.95rem;
+            background: white;
+            transition: 0.15s;
+        }
+        .course-row input:focus, .course-row select:focus {
+            border-color: #2563eb;
+            outline: none;
+            box-shadow: 0 0 0 3px #2563eb20;
+        }
+        .remove-btn {
+            background: #fee2e2;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #991b1b;
+            cursor: pointer;
+            transition: 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .remove-btn:hover {
+            background: #fecaca;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 14px 30px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            background: white;
+            border: 1px solid #cbd5e1;
+            transition: 0.1s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-primary {
+            background: #0f172a;
+            color: white;
+            border: none;
+            box-shadow: 0 8px 18px -6px #0f172a90;
+        }
+        .btn-primary:hover {
+            background: #1e293b;
+        }
+        .btn-secondary:hover {
+            background: #f1f5f9;
+        }
+        .btn-success {
+            background: #059669;
+            color: white;
+            border: none;
+        }
+        .btn-success:hover {
+            background: #047857;
+        }
+        .btn-warning {
+            background: #d97706;
+            color: white;
+            border: none;
+        }
+        .btn-warning:hover {
+            background: #b45309;
+        }
+        .semester-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .semester-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .semester-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .saved-semesters {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px dashed #cbd5e1;
+        }
+        .saved-item {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .saved-item:hover {
+            background: #f1f5f9;
+            transform: translateX(4px);
+        }
+        .saved-item-info {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .saved-item-name {
+            font-weight: 600;
+            color: #0f172a;
+        }
+        .saved-item-stats {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        .saved-item-delete {
+            color: #ef4444;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 20px;
+        }
+        .saved-item-delete:hover {
+            background: #fee2e2;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 32px;
+            max-width: 400px;
+            width: 90%;
+        }
+        .modal-input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 24px;
+            margin: 15px 0;
+            font-size: 1rem;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        .footer-note {
+            margin-top: 35px;
+            font-size: 0.8rem;
+            color: #62748c;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="gpa-card">
+    <div class="semester-header">
+        <div class="semester-title">
+            <span>📚</span>
+            <span id="currentSemesterName">Current Semester</span>
+        </div>
+        <div class="semester-actions">
+            <button class="btn btn-success" id="saveSemesterBtn">💾 Save</button>
+            <button class="btn btn-warning" id="loadSemesterBtn">📂 Load</button>
+        </div>
+    </div>
+
+    <h1>🎓 Semester GPA</h1>
+    <div class="sub">Add your courses — GPA updates automatically (4.0 scale)</div>
+
+    <!-- Summary numbers -->
+    <div class="summary">
+        <div class="gpa-box">
+            <div class="gpa-label">Cumulative GPA</div>
+            <div class="gpa-number" id="gpaDisplay">0.00</div>
+        </div>
+        <div class="credits-box">
+            <div class="gpa-label">Total Credits</div>
+            <div class="credits-number" id="creditsDisplay">0</div>
+        </div>
+    </div>
+
+    <!-- Column headers -->
+    <div class="course-header">
+        <span>Course (optional)</span>
+        <span>Credits</span>
+        <span>Grade</span>
+        <span></span>
+    </div>
+
+    <!-- Container for dynamic rows -->
+    <div id="coursesContainer"></div>
+
+    <!-- Buttons -->
+    <div class="action-buttons">
+        <button class="btn btn-primary" id="addCourseBtn">➕ Add course</button>
+        <button class="btn btn-secondary" id="resetBtn">⟲ Reset all</button>
+    </div>
+
+    <!-- Saved Semesters Section -->
+    <div class="saved-semesters" id="savedSemestersSection">
+        <h3 style="margin-bottom: 15px; color: #334155;">📦 Saved Semesters</h3>
+        <div id="savedSemestersList"></div>
+    </div>
+
+    <!-- Save Modal -->
+    <div class="modal" id="saveModal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 10px;">💾 Save Semester</h3>
+            <p style="color: #64748b; margin-bottom: 5px;">Enter a name for this semester:</p>
+            <input type="text" id="semesterNameInput" class="modal-input" placeholder="e.g. Fall 2024" autocomplete="off">
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" id="cancelSaveBtn">Cancel</button>
+                <button class="btn btn-success" id="confirmSaveBtn">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Modal -->
+    <div class="modal" id="loadModal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 15px;">📂 Load Semester</h3>
+            <div id="loadSemestersList" style="max-height: 300px; overflow-y: auto;"></div>
+            <div style="margin-top: 15px; text-align: right;">
+                <button class="btn btn-secondary" id="cancelLoadBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-note">⭐ Grade scale: A=4.0, A-=3.7, B+=3.3, B=3.0, B-=2.7, C+=2.3, C=2.0, D=1.0, F=0.0</div>
+</div>
+
+<script>
+    (function() {
+        // ----- Grade point mapping -----
+        const gradePoints = {
+            'A': 4.0, 'A-': 3.7,
+            'B+': 3.3, 'B': 3.0, 'B-': 2.7,
+            'C+': 2.3, 'C': 2.0,
+            'D': 1.0,
+            'F': 0.0
+        };
+
+        // ----- DOM elements -----
+        const container = document.getElementById('coursesContainer');
+        const gpaSpan = document.getElementById('gpaDisplay');
+        const creditsSpan = document.getElementById('creditsDisplay');
+        const addBtn = document.getElementById('addCourseBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const currentSemesterNameSpan = document.getElementById('currentSemesterName');
+        
+        // Modal elements
+        const saveModal = document.getElementById('saveModal');
+        const loadModal = document.getElementById('loadModal');
+        const semesterNameInput = document.getElementById('semesterNameInput');
+        const confirmSaveBtn = document.getElementById('confirmSaveBtn');
+        const cancelSaveBtn = document.getElementById('cancelSaveBtn');
+        const cancelLoadBtn = document.getElementById('cancelLoadBtn');
+        const saveSemesterBtn = document.getElementById('saveSemesterBtn');
+        const loadSemesterBtn = document.getElementById('loadSemesterBtn');
+        const savedSemestersList = document.getElementById('savedSemestersList');
+        const loadSemestersList = document.getElementById('loadSemestersList');
+
+        // ----- State -----
+        let currentSemesterId = 'current';
+        let savedSemesters = JSON.parse(localStorage.getItem('savedSemesters')) || {};
+
+        // ===========================================
+        // NEW FEATURE: Semester Saving/Loading
+        // ===========================================
+
+        // Save current semester to localStorage
+        function saveCurrentSemester(name) {
+            const rows = document.querySelectorAll('.course-row');
+            const courses = [];
+            
+            rows.forEach(row => {
+                const nameInput = row.querySelector('.course-name');
+                const creditsInput = row.querySelector('.credits-input');
+                const gradeSelect = row.querySelector('.grade-select');
+                
+                courses.push({
+                    name: nameInput.value,
+                    credits: creditsInput.value,
+                    grade: gradeSelect.value
+                });
+            });
+
+            const semesterData = {
+                id: Date.now().toString(),
+                name: name,
+                courses: courses,
+                timestamp: new Date().toLocaleString()
+            };
+
+            savedSemesters[semesterData.id] = semesterData;
+            localStorage.setItem('savedSemesters', JSON.stringify(savedSemesters));
+            
+            updateSavedSemestersDisplay();
+            closeModals();
+        }
+
+        // Load a saved semester
+        function loadSemester(semesterId) {
+            const semester = savedSemesters[semesterId];
+            if (!semester) return;
+
+            // Clear current rows
+            container.innerHTML = '';
+
+            // Add saved courses
+            semester.courses.forEach(course => {
+                const row = createRow(course.name, course.credits, course.grade);
+                container.appendChild(row);
+            });
+
+            // Update current semester name
+            currentSemesterId = semesterId;
+            currentSemesterNameSpan.textContent = semester.name;
+            
+            // Recalculate GPA
+            recalculate();
+            closeModals();
+        }
+
+        // Delete a saved semester
+        function deleteSemester(semesterId, event) {
+            event.stopPropagation();
+            delete savedSemesters[semesterId];
+            localStorage.setItem('savedSemesters', JSON.stringify(savedSemesters));
+            updateSavedSemestersDisplay();
+            
+            if (currentSemesterId === semesterId) {
+                currentSemesterId = 'current';
+                currentSemesterNameSpan.textContent = 'Current Semester';
+            }
+        }
+
+        // Update saved semesters display
+        function updateSavedSemestersDisplay() {
+            const semesters = Object.values(savedSemesters);
+            
+            if (semesters.length === 0) {
+                savedSemestersList.innerHTML = '<div style="color: #94a3b8; text-align: center; padding: 20px; background: #f8fafc; border-radius: 16px;">No saved semesters yet</div>';
+                return;
+            }
+
+            savedSemestersList.innerHTML = semesters
+                .sort((a, b) => b.timestamp.localeCompare(a.timestamp))
+                .map(sem => {
+                    // Calculate stats for preview
+                    let totalCredits = 0;
+                    let totalPoints = 0;
+                    sem.courses.forEach(course => {
+                        const credits = parseFloat(course.credits);
+                        if (!isNaN(credits) && credits > 0 && gradePoints[course.grade]) {
+                            totalCredits += credits;
+                            totalPoints += credits * gradePoints[course.grade];
+                        }
+                    });
+                    const avgGpa = totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : '0.00';
+
+                    return `
+                        <div class="saved-item" onclick="window.loadSemester('${sem.id}')">
+                            <div class="saved-item-info">
+                                <span class="saved-item-name">${sem.name}</span>
+                                <span class="saved-item-stats">${sem.courses.length} courses | GPA: ${avgGpa}</span>
+                                <span style="color: #94a3b8; font-size: 0.7rem;">${sem.timestamp}</span>
+                            </div>
+                            <button class="saved-item-delete" onclick="window.deleteSemester('${sem.id}', event)">✕</button>
+                        </div>
+                    `;
+                }).join('');
+        }
+
+        // Update load modal display
+        function updateLoadModalDisplay() {
+            const semesters = Object.values(savedSemesters);
+            
+            if (semesters.length === 0) {
+                loadSemestersList.innerHTML = '<div style="color: #94a3b8; text-align: center; padding: 20px;">No saved semesters</div>';
+                return;
+            }
+
+            loadSemestersList.innerHTML = semesters
+                .sort((a, b) => b.timestamp.localeCompare(a.timestamp))
+                .map(sem => {
+                    let totalCredits = 0;
+                    let totalPoints = 0;
+                    sem.courses.forEach(course => {
+                        const credits = parseFloat(course.credits);
+                        if (!isNaN(credits) && credits > 0 && gradePoints[course.grade]) {
+                            totalCredits += credits;
+                            totalPoints += credits * gradePoints[course.grade];
+                        }
+                    });
+                    const avgGpa = totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : '0.00';
+
+                    return `
+                        <div class="saved-item" onclick="selectLoadSemester('${sem.id}')">
+                            <div>
+                                <span style="font-weight: 600;">${sem.name}</span>
+                                <div style="font-size: 0.8rem; color: #64748b;">
+                                    ${sem.courses.length} courses • GPA: ${avgGpa} • ${sem.timestamp}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+        }
+
+        // Modal functions
+        function openSaveModal() {
+            saveModal.style.display = 'flex';
+            semesterNameInput.value = '';
+            semesterNameInput.focus();
+        }
+
+        function openLoadModal() {
+            updateLoadModalDisplay();
+            loadModal.style.display = 'flex';
+        }
+
+        function closeModals() {
+            saveModal.style.display = 'none';
+            loadModal.style.display = 'none';
+        }
+
+        // Select semester from load modal
+        window.selectLoadSemester = function(semesterId) {
+            loadSemester(semesterId);
+        };
+
+        // Make functions globally available for onclick handlers
+        window.loadSemester = loadSemester;
+        window.deleteSemester = deleteSemester;
+
+        // ----- Helper to recalc GPA from all rows -----
+        function recalculate() {
+            const rows = document.querySelectorAll('.course-row');
+            let totalPoints = 0;
+            let totalCredits = 0;
+
+            rows.forEach(row => {
+                const creditsInput = row.querySelector('.credits-input');
+                const gradeSelect = row.querySelector('.grade-select');
+                const credits = parseFloat(creditsInput.value);
+                const grade = gradeSelect.value;
+
+                if (!isNaN(credits) && credits > 0 && gradePoints.hasOwnProperty(grade)) {
+                    totalPoints += credits * gradePoints[grade];
+                    totalCredits += credits;
+                }
+            });
+
+            if (totalCredits > 0) {
+                const gpa = totalPoints / totalCredits;
+                gpaSpan.textContent = gpa.toFixed(2);
+            } else {
+                gpaSpan.textContent = '0.00';
+            }
+            creditsSpan.textContent = totalCredits.toFixed(1);
+        }
+
+        // ----- Create a new course row (optionally with placeholder values) -----
+        function createRow(courseName = '', credits = '', grade = 'A') {
+            const row = document.createElement('div');
+            row.className = 'course-row';
+
+            // Course name input
+            const nameInput = document.createElement('input');
+            nameInput.type = 'text';
+            nameInput.placeholder = 'e.g. Math 101';
+            nameInput.value = courseName;
+            nameInput.classList.add('course-name');
+
+            // Credits input (number)
+            const creditsInput = document.createElement('input');
+            creditsInput.type = 'number';
+            creditsInput.placeholder = 'Credits';
+            creditsInput.step = '0.5';
+            creditsInput.min = '0';
+            creditsInput.value = credits;
+            creditsInput.classList.add('credits-input');
+
+            // Grade dropdown
+            const gradeSelect = document.createElement('select');
+            gradeSelect.classList.add('grade-select');
+            const grades = ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'D', 'F'];
+            grades.forEach(g => {
+                const option = document.createElement('option');
+                option.value = g;
+                option.textContent = g;
+                if (g === grade) option.selected = true;
+                gradeSelect.appendChild(option);
+            });
+
+            // Remove button
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'remove-btn';
+            removeBtn.innerHTML = '✕';
+            removeBtn.setAttribute('aria-label', 'remove course');
+
+            // Assemble row
+            row.appendChild(nameInput);
+            row.appendChild(creditsInput);
+            row.appendChild(gradeSelect);
+            row.appendChild(removeBtn);
+
+            // Attach events
+            creditsInput.addEventListener('input', recalculate);
+            gradeSelect.addEventListener('change', recalculate);
+            removeBtn.addEventListener('click', () => {
+                row.remove();
+                recalculate();
+            });
+
+            return row;
+        }
+
+        // ----- Add a new empty row -----
+        function addEmptyRow() {
+            const newRow = createRow('', '', 'A');
+            container.appendChild(newRow);
+            recalculate();
+        }
+
+        // ----- Reset to default demo rows -----
+        function resetToDefault() {
+            container.innerHTML = '';
+            
+            const row1 = createRow('Biology', '3', 'B+');
+            const row2 = createRow('History', '4', 'A-');
+            const row3 = createRow('Calculus', '4', 'B');
+            container.appendChild(row1);
+            container.appendChild(row2);
+            container.appendChild(row3);
+            
+            currentSemesterId = 'current';
+            currentSemesterNameSpan.textContent = 'Current Semester';
+            recalculate();
+        }
+
+        // ----- Event listeners -----
+        addBtn.addEventListener('click', addEmptyRow);
+        resetBtn.addEventListener('click', resetToDefault);
+
+        // Save semester button
+        saveSemesterBtn.addEventListener('click', openSaveModal);
+
+        // Load semester button
+        loadSemesterBtn.addEventListener('click', openLoadModal);
+
+        // Confirm save
+        confirmSaveBtn.addEventListener('click', () => {
+            const name = semesterNameInput.value.trim();
+            if (name) {
+                saveCurrentSemester(name);
+            } else {
+                alert('Please enter a semester name');
+            }
+        });
+
+        // Cancel buttons
+        cancelSaveBtn.addEventListener('click', closeModals);
+        cancelLoadBtn.addEventListener('click', closeModals);
+
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === saveModal || e.target === loadModal) {
+                closeModals();
+            }
+        });
+
+        // ----- Initialize with some default rows -----
+        resetToDefault();
+        
+        // Load saved semesters display
+        updateSavedSemestersDisplay();
+    })();
+</script>
+</body>
+</html>
