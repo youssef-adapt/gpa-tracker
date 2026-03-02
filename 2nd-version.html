@@ -55,7 +55,7 @@
             margin-bottom: 32px;
         }
         .gpa-box {
-            background: white;
+            background: blue;
             padding: 12px 32px;
             border-radius: 50px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.02);
@@ -74,7 +74,7 @@
             line-height: 1.2;
         }
         .credits-box {
-            background: white;
+            background: red;
             padding: 12px 32px;
             border-radius: 50px;
             text-align: center;
@@ -155,7 +155,7 @@
         }
         .btn-primary {
             background: #0f172a;
-            color: white;
+            color: red;
             border: none;
             box-shadow: 0 8px 18px -6px #0f172a90;
         }
@@ -302,13 +302,13 @@
     <h1>🎓 Semester GPA</h1>
     <div class="sub">Add your courses — GPA updates automatically (4.0 scale)</div>
 
-    <!-- Summary numbers -->
+    <!-- Summary numbers with weird colors preserved -->
     <div class="summary">
-        <div class="gpa-box">
+        <div class="gpa-box" style="background: blue;">
             <div class="gpa-label">Cumulative GPA</div>
             <div class="gpa-number" id="gpaDisplay">0.00</div>
         </div>
-        <div class="credits-box">
+        <div class="credits-box" style="background: red;">
             <div class="gpa-label">Total Credits</div>
             <div class="credits-number" id="creditsDisplay">0</div>
         </div>
